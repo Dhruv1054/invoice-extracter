@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+backend/temp/
+backend/storage/*.xlsx
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+!frontend/.env.local.example
+
+# OS
+.DS_Store
+Thumbs.db
