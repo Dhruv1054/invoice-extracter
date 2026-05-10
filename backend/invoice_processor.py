@@ -7,10 +7,20 @@ import pdfplumber
 import pandas as pd
 from pathlib import Path
 import io
+from dotenv import load_dotenv
+
+load_dotenv()
+
+_api_key = os.getenv("OPENROUTER_API_KEY")
+if not _api_key:
+    raise EnvironmentError(
+        "OPENROUTER_API_KEY is not set. Create backend/.env with your key.\n"
+        "Example: OPENROUTER_API_KEY=sk-or-v1-..."
+    )
 
 client = openai.OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
+    api_key=_api_key,
 )
 
 EXTRACTION_PROMPT = """You are an expert invoice data extractor. Analyze this invoice image and extract ALL tables present.
