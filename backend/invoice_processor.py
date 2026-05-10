@@ -1,4 +1,4 @@
-import anthropic
+import openai
 import base64
 import json
 import os
@@ -6,10 +6,12 @@ import re
 import pdfplumber
 import pandas as pd
 from pathlib import Path
-from PIL import Image
 import io
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = openai.OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
 
 EXTRACTION_PROMPT = """You are an expert invoice data extractor. Analyze this invoice image and extract ALL tables present.
 
@@ -52,23 +54,19 @@ def pdf_to_images(pdf_path: str) -> list[bytes]:
 
 
 def extract_tables_from_image(image_bytes: bytes, media_type: str = "image/png") -> list[dict]:
-    """Send image to Claude and extract table data."""
+    """Send image to a vision model via OpenRouter and extract table data."""
     b64_image = base64.standard_b64encode(image_bytes).decode("utf-8")
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
+    response = client.chat.completions.create(
+        model="anthropic/claude-3.5-sonnet",
         max_tokens=4096,
         messages=[
             {
                 "role": "user",
                 "content": [
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": b64_image,
-                        },
+                        "type": "image_url",
+                        "image_url": {"url": f"data:{media_type};base64,{b64_image}"},
                     },
                     {"type": "text", "text": EXTRACTION_PROMPT},
                 ],
@@ -76,8 +74,7 @@ def extract_tables_from_image(image_bytes: bytes, media_type: str = "image/png")
         ],
     )
 
-    raw = response.content[0].text.strip()
-    # Strip markdown code fences if present
+    raw = response.choices[0].message.content.strip()
     raw = re.sub(r"^```(?:json)?\s*", "", raw)
     raw = re.sub(r"\s*```$", "", raw)
     return json.loads(raw)
