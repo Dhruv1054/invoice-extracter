@@ -58,7 +58,7 @@ def extract_tables_from_image(image_bytes: bytes, media_type: str = "image/png")
     b64_image = base64.standard_b64encode(image_bytes).decode("utf-8")
 
     response = client.chat.completions.create(
-        model="anthropic/claude-3.5-sonnet",
+        model=os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-haiku"),
         max_tokens=4096,
         messages=[
             {

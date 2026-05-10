@@ -57,7 +57,7 @@ def chat(
     messages.append({"role": "user", "content": message})
 
     response = client.chat.completions.create(
-        model="anthropic/claude-3.5-sonnet",
+        model=os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-haiku"),
         max_tokens=2048,
         messages=messages,
     )
