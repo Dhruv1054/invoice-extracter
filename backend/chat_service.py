@@ -4,8 +4,8 @@ import pandas as pd
 from pathlib import Path
 
 client = openai.OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://integrate.api.nvidia.com/v1",
+    api_key=os.getenv("NVIDIA_API_KEY"),
 )
 
 SYSTEM_PROMPT = """You are an intelligent invoice assistant. You have access to invoice data stored as Excel files.
@@ -57,7 +57,7 @@ def chat(
     messages.append({"role": "user", "content": message})
 
     response = client.chat.completions.create(
-        model=os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-haiku"),
+        model=os.getenv("NVIDIA_MODEL", "meta/llama-3.2-90b-vision-instruct"),
         max_tokens=2048,
         messages=messages,
     )
