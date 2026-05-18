@@ -11,15 +11,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_api_key = os.getenv("OPENROUTER_API_KEY")
+_api_key = os.getenv("NVIDIA_API_KEY")
 if not _api_key:
     raise EnvironmentError(
-        "OPENROUTER_API_KEY is not set. Create backend/.env with your key.\n"
-        "Example: OPENROUTER_API_KEY=sk-or-v1-..."
+        "NVIDIA_API_KEY is not set. Create backend/.env with your key.\n"
+        "Example: NVIDIA_API_KEY=nvapi-..."
     )
 
 client = openai.OpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url="https://integrate.api.nvidia.com/v1",
     api_key=_api_key,
 )
 
@@ -68,7 +68,7 @@ def extract_tables_from_image(image_bytes: bytes, media_type: str = "image/png")
     b64_image = base64.standard_b64encode(image_bytes).decode("utf-8")
 
     response = client.chat.completions.create(
-        model=os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-haiku"),
+        model=os.getenv("NVIDIA_MODEL", "meta/llama-3.2-90b-vision-instruct"),
         max_tokens=4096,
         messages=[
             {

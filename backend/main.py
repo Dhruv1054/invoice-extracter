@@ -112,8 +112,8 @@ def delete_invoice(filename: str):
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    if not os.getenv("OPENROUTER_API_KEY"):
-        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY not configured.")
+    if not os.getenv("NVIDIA_API_KEY"):
+        raise HTTPException(status_code=500, detail="NVIDIA_API_KEY not configured.")
     try:
         reply = chat(req.message, req.history, STORAGE_DIR, req.target_files)
         return {"reply": reply}
